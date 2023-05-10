@@ -9,7 +9,7 @@ def request_pwn_API(query):
     
     response = requests.get(url)
     if response.status_code != 200:
-        raise RuntimeError('An error occured while requesting API.')
+        raise RuntimeError('An error occurred while requesting API.')
 
     return response
 
@@ -41,7 +41,7 @@ def main():
             except KeyboardInterrupt:
                 print('Exiting the program.')
                 return
-        
+
         password_hash = get_password_hash(password_str)
         hash_first5chars = password_hash[:5]
         hash_tail = password_hash[5:]

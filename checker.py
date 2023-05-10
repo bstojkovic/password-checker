@@ -19,10 +19,10 @@ def get_password_hash(password):
     hash_digest = sha1_hash.hexdigest().upper()
     return hash_digest
 
-def get_hash_pwned_times(test_hash_tail, pwned_hashes):
+def get_hash_pwned_times(test_hash_suffix, pwned_hashes):
     for line in pwned_hashes:
-        pwned_hash_tail, pwned_times = line.split(':')
-        if pwned_hash_tail == test_hash_tail:
+        pwned_hash_suffix, pwned_times = line.split(':')
+        if pwned_hash_suffix == test_hash_suffix:
             return pwned_times
     return 0
 
@@ -44,11 +44,11 @@ def main():
 
         password_hash = get_password_hash(password_str)
         hash_first5chars = password_hash[:5]
-        hash_tail = password_hash[5:]
+        hash_suffix = password_hash[5:]
 
         pwned_response_text = request_pwn_API(hash_first5chars).text
         pwned_times = get_hash_pwned_times(
-            hash_tail,
+            hash_suffix,
             pwned_response_text.splitlines()
         )
 

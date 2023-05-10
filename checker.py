@@ -4,6 +4,9 @@ import hashlib
 import getpass
 import sys
 
+class PasswordPromptWarning(Exception):
+    pass
+
 def request_pwn_API(query):
     url = f'https://api.pwnedpasswords.com/range/{query}'
     
@@ -39,18 +42,25 @@ def get_password_pwned_times(password_str):
 
     return pwned_times
 
+def prompt_password():
+    with warnings.catch_warnings():
+        warnings.filterwarnings('error', category=getpass.GetPassWarning)
+
+        try:
+            password_str = getpass.getpass()
+        except getpass.GetPassWarning as w:
+            raise PasswordPromptWarning(w)
+
+    return password_str
+
 def main():
     while True:
-        with warnings.catch_warnings():
-            warnings.filterwarnings('error', category=getpass.GetPassWarning)
-            try:
-                password_str = getpass.getpass()
-            except getpass.GetPassWarning as w:
-                print(
-                    'Cannot securely obtain password from the terminal. '
-                    'Aborting.'
-                )
-                return
+        try:
+            password_str = prompt_password()
+        except PasswordPromptWarning as e:
+            print(e)
+            print('Aborting.')
+            return
 
         pwned_times = get_password_pwned_times(password_str)
         if pwned_times:

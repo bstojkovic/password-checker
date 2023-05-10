@@ -51,9 +51,6 @@ def main():
                     'Aborting.'
                 )
                 return
-            except KeyboardInterrupt:
-                print('Exiting the program.')
-                return
 
         pwned_times = get_password_pwned_times(password_str)
         if pwned_times:
@@ -62,4 +59,7 @@ def main():
             print('Password was not found in the database.')
 
 if __name__ == '__main__':
-    main()
+    try:
+        main()
+    except KeyboardInterrupt:
+        print('\nExiting the program.')

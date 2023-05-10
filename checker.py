@@ -26,6 +26,19 @@ def get_hash_pwned_times(test_hash_suffix, pwned_hashes):
             return pwned_times
     return 0
 
+def get_password_pwned_times(password_str):
+    password_hash = get_password_hash(password_str)
+    hash_first5chars = password_hash[:5]
+    hash_suffix = password_hash[5:]
+
+    pwned_response_text = request_pwn_API(hash_first5chars).text
+    pwned_times = get_hash_pwned_times(
+        hash_suffix,
+        pwned_response_text.splitlines()
+    )
+
+    return pwned_times
+
 def main():
     while True:
         with warnings.catch_warnings():
@@ -42,16 +55,7 @@ def main():
                 print('Exiting the program.')
                 return
 
-        password_hash = get_password_hash(password_str)
-        hash_first5chars = password_hash[:5]
-        hash_suffix = password_hash[5:]
-
-        pwned_response_text = request_pwn_API(hash_first5chars).text
-        pwned_times = get_hash_pwned_times(
-            hash_suffix,
-            pwned_response_text.splitlines()
-        )
-
+        pwned_times = get_password_pwned_times(password_str)
         if pwned_times:
             print(f'Password found {pwned_times} times in the database.')
         else:
